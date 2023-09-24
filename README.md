@@ -1,6 +1,5 @@
 # EHTS-FinalVerison
-This is our final mobile and wear OS app version of the Erogonmic HeartRate Tracking System.
-This is the final version of the ERGONOMIC HEARTRATE TRACKING SYSTEM The main purpose of the Ergonomic Heart Rate Tracking System smartwatch is to help determine whether the test subjects are worthy of obtaining their sought positions or are able to retain their current positions. The goal of the E.H.T.S watch is to be used as a detector or preventative measure to help remove or block the bias or ill minded from being put in positions of power.
+This is the final version of the ERGONOMIC HEARTRATE TRACKING SYSTEM. The main purpose of the Ergonomic Heart Rate Tracking System smartwatch is to help determine whether the test subjects are worthy of obtaining their sought positions or are able to retain their current positions. The goal of the E.H.T.S watch is to be used as a detector or preventative measure to help remove or block the bias or ill minded from being put in positions of power.
 
 The objective of the E.H.T.S is to enforce an additional measure in the hiring process of unbiased law enforcement employees. The smartwatch will be tasked to track and evaluate the employees or trainees through controlled and simulated tests. The device will record the heart rate and how the test subject responds to a given test scenario. The test results will be sent to the employer which help them decide whether the employee is a good fit for the job.
 
