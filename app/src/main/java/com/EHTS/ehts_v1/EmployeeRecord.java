@@ -238,6 +238,8 @@ public class EmployeeRecord extends AppCompatActivity {
                 isModerateTestSelected = true;
                 // Determine the final result and update the UI accordingly
                 updateFinalResultUI();
+                //RK: intense button bug fixed below
+                isModerateTestSelected = false;
             }
         });
 
@@ -248,6 +250,9 @@ public class EmployeeRecord extends AppCompatActivity {
                 isIntenseTestSelected = true;
                 // Determine the final result and update the UI accordingly
                 updateFinalResultUI();
+                //RK
+                isIntenseTestSelected = false;
+
             }
         });
 
@@ -354,20 +359,24 @@ public class EmployeeRecord extends AppCompatActivity {
         });
     }
 
-    //This feature still needs be fixed
+
     //allow users to retrive the last 24 hour tests and ask user moderate vs intense then determine if they passed or failed
     private void updateFinalResultUI() {
         // Calculate the target heart rate ranges based on age
         int age = Integer.parseInt(agedata.getText().toString());
         int maxAgeRelatedHR = 220 - age;
-        int moderateIntensityLowerLimit = (int) (maxAgeRelatedHR * 0.64);
+        //RK: Modified equations by changing percentages of maximum heart rate for moderate and intense activity.
+        int moderateIntensityLowerLimit = (int) (maxAgeRelatedHR * 0.50);
         int moderateIntensityUpperLimit = (int) (maxAgeRelatedHR * 0.76);
-        int vigorousIntensityLowerLimit = (int) (maxAgeRelatedHR * 0.77);
+        int vigorousIntensityLowerLimit = (int) (maxAgeRelatedHR * 0.70);
         int vigorousIntensityUpperLimit = (int) (maxAgeRelatedHR * 0.93);
+
+
 
         // Initialize restingHR and maxHR variables
         int restingHR = Integer.parseInt(AvgtvResting.getText().toString());
         int maxHR = Integer.parseInt(AvgtvMax.getText().toString());
+
 
         // Calculate the target heart rate range based on the selected test
         int targetLowerLimit;
@@ -392,8 +401,9 @@ public class EmployeeRecord extends AppCompatActivity {
         boolean isMaxHRWithinRange = (maxHR >= targetLowerLimit && maxHR <= targetUpperLimit);
 
     // Determine the final result and update the UI accordingly
+        //RK: Decided to use resting heart rate only and not max to check if within range
         String finalResultMessage;
-        if (isRestingHRWithinRange || isMaxHRWithinRange) {
+        if (isRestingHRWithinRange) {
             finalResultMessage = "Employee Passed the " + testType + " EHTS Exam";
             tvFinalResult.setText(finalResultMessage);
             cardFinalResult.setCardBackgroundColor(Color.GREEN);
