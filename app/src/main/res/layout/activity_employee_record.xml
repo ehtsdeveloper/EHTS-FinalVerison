@@ -964,8 +964,24 @@
 
 
 
+        <!-- Add the playAudioButton here -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:padding="10dp"
+            android:gravity="center_horizontal">
 
+            <Button
+                android:id="@+id/playAudioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Play Audio"
+                android:enabled="false" /> <!-- Initially disabled until audio file is ready -->
+        </RelativeLayout>
         </LinearLayout>
+
+
 
     </ScrollView>
 

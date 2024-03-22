@@ -91,7 +91,13 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-
+        <service android:name=".DataLayerListenerService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+                <data android:scheme="wear" android:host="*" android:pathPrefix="/audio" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

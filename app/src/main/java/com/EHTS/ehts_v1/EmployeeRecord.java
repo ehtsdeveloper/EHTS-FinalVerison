@@ -6,9 +6,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.BroadcastReceiver;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -738,6 +741,41 @@ private void fetchHeartRateData() {
             e.printStackTrace();
         }
         return "";
+    }
+
+    private BroadcastReceiver audioFileReceiver = new BroadcastReceiver() {
+         @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(DataLayerListenerService.AUDIO_FILE_READY_ACTION)) {
+                String audioFilePath = intent.getStringExtra(DataLayerListenerService.AUDIO_FILE_PATH);
+                // Update the UI with the path or play the audio file
+                // For example, you could update a TextView with the file path or enable a play button
+                Button playButton = findViewById(R.id.playAudioButton);
+                playButton.setEnabled(true);
+                playButton.setOnClickListener(v -> playAudio(audioFilePath));
+            }
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(this).registerReceiver(audioFileReceiver,
+                new IntentFilter(DataLayerListenerService.AUDIO_FILE_READY_ACTION));
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(audioFileReceiver);
+    }
+
+    private void playAudio(String filePath) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri audioUri = FileProvider.getUriForFile(this, "com.EHTS.ehts_v1.fileprovider", new File(filePath));
+        intent.setDataAndType(audioUri, "audio/3gp");
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(intent);
     }
 
 
