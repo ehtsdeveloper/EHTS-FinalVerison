@@ -22,9 +22,16 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.samsung.android.service.health.tracking.HealthTrackingService
+import com.samsung.android.service.health.tracking.ConnectionListener
+import com.samsung.android.service.health.tracking.HealthTracker
+import com.samsung.android.service.health.tracking.HealthTrackerException
+import com.samsung.android.service.health.tracking.data.DataPoint
+import com.samsung.android.service.health.tracking.data.HealthTrackerType
 import java.text.SimpleDateFormat
 import java.util.*
-
+/*References: 1. https://developer.samsung.com/codelab/health/blood-oxygen.html including Measuring Blood Oxygen Sample Code
+2. Samsung Privileged SDK Programming Guide  */
 //This class records a users heart rate continuously and evaluates the user low, resting, and max hr and records the timestamp
 //User can administer multiple tests
 //after test is over stop action sends the test results to the database
@@ -58,7 +65,43 @@ class HeartRate : Activity(), SensorEventListener {
     private var empId: String? = null
     private var timerHandler = Handler(Looper.getMainLooper())
     private var timerRunnable: Runnable? = null
+    //RK oxygen start
+    var oxygentracker: HealthTracker? =null
+    var healthtrackingservice: HealthTrackingService?=null
+    private val connectionListen:ConnectionListener= object : ConnectionListener {
+        override fun onConnectionSuccess() {
+            var c= healthtrackingservice?.trackingCapability?.supportHealthTrackerTypes
+            var available:MutableList<HealthTrackerType> = c as MutableList<HealthTrackerType>
+            if (!available.contains(HealthTrackerType.SPO2)){
+                //spo2 tracker not available
+            }
+        }
 
+        override fun onConnectionEnded() {
+            TODO("Not yet implemented")
+        }
+
+        override fun onConnectionFailed(p0: HealthTrackerException?) {
+            TODO("Not yet implemented")
+        }
+
+    }
+    private val trackerListen: HealthTracker.TrackerEventListener=object:
+        HealthTracker.TrackerEventListener {
+        override fun onDataReceived(p0: MutableList<DataPoint>) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onFlushCompleted() {
+            TODO("Not yet implemented")
+        }
+
+        override fun onError(p0: HealthTracker.TrackerError?) {
+            TODO("Not yet implemented")
+        }
+
+    }
+    //RK oxygen end
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_heart_rate)
@@ -70,12 +113,18 @@ class HeartRate : Activity(), SensorEventListener {
         // Initialize sensor manager
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         heartRateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE)
-
+        //Rk oxygen start
+        healthtrackingservice= HealthTrackingService(connectionListen, this);
+        healthtrackingservice!!.connectService()
+        //RK oxygen end
         // Check if body sensors permission is granted
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BODY_SENSORS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.BODY_SENSORS), PERMISSION_REQUEST_BODY_SENSORS)
         } else {
             registerHeartRateSensorListener()
+            //RK oxygen start
+            trackOxygen()
+            //RK oxygen end
         }
 
         // Find the TextView and buttons in the layout
@@ -95,7 +144,9 @@ class HeartRate : Activity(), SensorEventListener {
         // Set click listener for the "Stop" button
         stopButton.setOnClickListener {
             unregisterHeartRateSensorListener()
-
+            //RK oxygen start
+            stoptrackOxygen()
+            //RK oxygen end
             stopHeartRateRecordingService()
             calculateHeartRateMetrics() // Calculate heart rate metrics one final time
             timerHandler.removeCallbacksAndMessages(null) // Stop the timer completely
@@ -112,6 +163,19 @@ class HeartRate : Activity(), SensorEventListener {
 
         }
     }
+    //RK oxygen start
+    protected fun trackOxygen(){
+        //var oxygentracker: HealthTracker? =null
+        oxygentracker= healthtrackingservice?.getHealthTracker(HealthTrackerType.SPO2)
+        oxygentracker?.setEventListener(trackerListen)
+
+    }
+    protected fun stoptrackOxygen(){
+
+        oxygentracker?.unsetEventListener()
+
+    }
+    //RK oxygen end
 
     private fun registerHeartRateSensorListener() {
         sensorManager.registerListener(this, heartRateSensor, SensorManager.SENSOR_DELAY_NORMAL)
