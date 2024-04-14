@@ -713,19 +713,50 @@
 
 
             </androidx.cardview.widget.CardView>
-            <TextView
-                android:id="@+id/chooseTest"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="42dp"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="-15dp"
+                android:gravity="center">
 
-                android:gravity="start|center_vertical"
-                android:text="What Test was Administered Last? "
-                android:padding="15dp"
-                android:layout_marginBottom="-25dp"
-                android:textColor="@color/DarkHeaderGray"
-                android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/chooseTest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="11dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="What Test was Administered Last? "
+                    android:textColor="@color/DarkHeaderGray"
+                    android:textStyle="bold" />
+
+                <Switch
+                    android:id="@+id/TestAvgType"
+                    android:layout_width="154dp"
+                    android:layout_height="31dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_toEndOf="@+id/chooseTest"
+                    android:checked="false"
+                    android:paddingStart="-16dp"
+                    android:paddingEnd="16dp"
+                    android:showText="true"
+                    android:textColor="@color/black"
+                    android:textOff="All"
+                    android:textOn="24Hrs"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

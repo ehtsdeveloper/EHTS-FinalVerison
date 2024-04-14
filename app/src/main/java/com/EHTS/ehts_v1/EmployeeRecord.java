@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,6 +75,8 @@ public class EmployeeRecord extends AppCompatActivity {
     private boolean isModerateTestSelected = false;
     private boolean isIntenseTestSelected = false;
     CardView cardFinalResult;
+    Switch TestAvgType;
+    private boolean isTestAvgTypeOn = false;
 
     // TextView  editProfile;
     Button deleteProfile;
@@ -127,7 +130,7 @@ public class EmployeeRecord extends AppCompatActivity {
         cardFinalResult = findViewById(R.id.cardFinalResult);
         ModerateTest = findViewById(R.id.ModerateTest);
         IntenseTest= findViewById(R.id.IntenseTest);
-
+        TestAvgType= findViewById(R.id.TestAvgType);
 
 
         lineChart = findViewById(R.id.chart);
@@ -317,6 +320,9 @@ public class EmployeeRecord extends AppCompatActivity {
                 int lowSum = 0;
                 int restingSum = 0;
                 int maxSum = 0;
+                //EY: variable for date of test end and its format created
+                String DateTimeEndStamp;
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     // Access the data of each child node
@@ -328,7 +334,30 @@ public class EmployeeRecord extends AppCompatActivity {
                             lowSum += data.getLow().intValue();
                         }
 
-                        if (data.getResting() != null) {
+                        //EY: switch for only 24 hrs is selcted
+                        if ((isTestAvgTypeOn == true) && (data.getResting() != null)){
+                            childrenCount = 0;
+                            DateTimeEndStamp = data.getRecordingStopTimeStamp().toString();
+                            try {
+                                Date date = format.parse(DateTimeEndStamp);
+                                SimpleDateFormat dayFormat = new SimpleDateFormat("dd");
+                                String day = dayFormat.format(date);
+                                int TestDay = Integer.parseInt(day);
+
+                                // if the date of test is within 1 day of previoous test then add to sum
+                                if (TestDay - (TestDay - 1) == 1) {
+                                    restingSum += data.getResting().intValue();
+                                    childrenCount ++;
+                                }
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                        }
+
+                        }
+
+                    // EY: added the false condition to prevent errors in calculations of restingsum in case of default
+                        if ((data.getResting() != null) && (isTestAvgTypeOn == false)) {
                             restingSum += data.getResting().intValue();
                         }
 
@@ -371,6 +400,11 @@ public class EmployeeRecord extends AppCompatActivity {
         int vigorousIntensityLowerLimit = (int) (maxAgeRelatedHR * 0.70);
         int vigorousIntensityUpperLimit = (int) (maxAgeRelatedHR * 0.93);
 
+        // EY: depending on if switch is on 24 hours or all tests change value of isTestAvgTypeOn
+        if (TestAvgType.isChecked()) //true = 24hrs
+        { isTestAvgTypeOn = true; }
+        else
+        { isTestAvgTypeOn = false; }
 
 
         // Initialize restingHR and maxHR variables
@@ -382,6 +416,7 @@ public class EmployeeRecord extends AppCompatActivity {
         int targetLowerLimit;
         int targetUpperLimit;
         String testType;
+
 
         if (isModerateTestSelected) {
             targetLowerLimit = moderateIntensityLowerLimit;
