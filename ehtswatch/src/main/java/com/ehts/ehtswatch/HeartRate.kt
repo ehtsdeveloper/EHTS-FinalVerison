@@ -13,17 +13,25 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.net.Uri
 import android.os.*
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.wearable.Asset
+import com.google.android.gms.wearable.DataMap
+import com.google.android.gms.wearable.PutDataMapRequest
+import com.google.android.gms.wearable.Wearable
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import android.media.MediaRecorder
+import java.io.IOException
 
 //This class records a users heart rate continuously and evaluates the user low, resting, and max hr and records the timestamp
 //User can administer multiple tests
@@ -59,6 +67,9 @@ class HeartRate : Activity(), SensorEventListener {
     private var timerHandler = Handler(Looper.getMainLooper())
     private var timerRunnable: Runnable? = null
 
+    private var voiceRecording: VoiceRecording? = null  // Added for voice recording
+    private lateinit var audioFilePath: String  // Now 'audioFilePath' is a class-level variable
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_heart_rate)
@@ -76,6 +87,11 @@ class HeartRate : Activity(), SensorEventListener {
             requestPermissions(arrayOf(Manifest.permission.BODY_SENSORS), PERMISSION_REQUEST_BODY_SENSORS)
         } else {
             registerHeartRateSensorListener()
+        }
+
+        //check and get permission for audio recording
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf( Manifest.permission.RECORD_AUDIO), 10)
         }
 
         // Find the TextView and buttons in the layout
@@ -96,6 +112,8 @@ class HeartRate : Activity(), SensorEventListener {
         stopButton.setOnClickListener {
             unregisterHeartRateSensorListener()
 
+            stopVoiceRecordingAndSendAudio()
+
             stopHeartRateRecordingService()
             calculateHeartRateMetrics() // Calculate heart rate metrics one final time
             timerHandler.removeCallbacksAndMessages(null) // Stop the timer completely
@@ -107,6 +125,9 @@ class HeartRate : Activity(), SensorEventListener {
         startButton.setOnClickListener {
             recordingStartTime = System.currentTimeMillis() // Get the start timestamp when the button is clicked
             startHeartRateRecording()
+
+            startVoiceRecording()
+
             startButton.visibility = Button.INVISIBLE // Hide the start button
             Toast.makeText(this, "Test started", Toast.LENGTH_SHORT).show() // Display a toast message
 
@@ -316,5 +337,56 @@ class HeartRate : Activity(), SensorEventListener {
     }
 
  */
+
+    private fun startVoiceRecording() {
+        audioFilePath = getUniqueAudioFilePath()  // Generate a unique file path for the recording
+        voiceRecording = VoiceRecording(audioFilePath)  // Initialize VoiceRecording with the file path
+        voiceRecording?.startRecording()  // Start voice recording
+
+    }
+
+
+
+    private fun stopVoiceRecordingAndSendAudio() {
+        voiceRecording?.stopRecording()  // Stop voice recording
+        sendAudioFileToMobile()   // Send the audio file to the mobile app
+    }
+
+    private fun getUniqueAudioFilePath(): String {
+        val directory = getExternalFilesDir(null)  // Use app-specific storage directory
+        val fileName = "test_audio_${System.currentTimeMillis()}.3gp"  // Unique file name using timestamp
+        return File(directory, fileName).absolutePath  // Return the absolute file path
+    }
+
+    private fun sendAudioFileToMobile() {
+        val wearableDataClient = Wearable.getDataClient(this)
+
+        // Convert audio file to Asset
+        val uri = Uri.fromFile(File(audioFilePath))
+        val asset = Asset.createFromUri(uri)
+
+        // Create a DataMap and put the audio Asset in it
+        val dataMap = DataMap().apply {
+            putAsset("audioAsset", asset)
+        }
+
+        // Create a PutDataMapRequest with the DataMap
+        val putDataMapReq = PutDataMapRequest.create("/audio").apply {
+            dataMap.putAll(dataMap)  // Correctly put the DataMap into the PutDataMapRequest
+        }
+
+        // Convert PutDataMapRequest to PutDataRequest and set it as urgent
+        val putDataReq = putDataMapReq.asPutDataRequest().setUrgent()
+
+        // Send the data to the data layer
+        val dataItemTask = wearableDataClient.putDataItem(putDataReq)
+        dataItemTask.addOnSuccessListener {
+            // Handle success
+        }.addOnFailureListener {
+            // Handle failure
+        }
+    }
+
+
 
 }
