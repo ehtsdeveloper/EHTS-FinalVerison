@@ -391,6 +391,8 @@ public class EmployeeRecord extends AppCompatActivity {
 
     //allow users to retrive the last 24 hour tests and ask user moderate vs intense then determine if they passed or failed
     private void updateFinalResultUI() {
+        int restingHR = 0;
+        int maxHR = 0;
         // Calculate the target heart rate ranges based on age
         int age = Integer.parseInt(agedata.getText().toString());
         int maxAgeRelatedHR = 220 - age;
@@ -408,8 +410,15 @@ public class EmployeeRecord extends AppCompatActivity {
 
 
         // Initialize restingHR and maxHR variables
-        int restingHR = Integer.parseInt(AvgtvResting.getText().toString());
-        int maxHR = Integer.parseInt(AvgtvMax.getText().toString());
+        if (isTestAvgTypeOn){
+            restingHR = Integer.parseInt(tvResting.getText().toString());
+            maxHR = Integer.parseInt(tvMax.getText().toString());
+        }
+        else{
+            restingHR = Integer.parseInt(AvgtvResting.getText().toString());
+            maxHR = Integer.parseInt(AvgtvMax.getText().toString());
+
+        }
 
 
         // Calculate the target heart rate range based on the selected test
@@ -432,8 +441,8 @@ public class EmployeeRecord extends AppCompatActivity {
         }
 
         // Check if either the resting or max heart rate is within the target range
-        boolean isRestingHRWithinRange = (restingHR >= targetLowerLimit && restingHR <= targetUpperLimit);
-        boolean isMaxHRWithinRange = (maxHR >= targetLowerLimit && maxHR <= targetUpperLimit);
+        boolean isRestingHRWithinRange = ((restingHR >= targetLowerLimit) && (restingHR <= targetUpperLimit));
+        boolean isMaxHRWithinRange = ((maxHR >= targetLowerLimit) && (maxHR <= targetUpperLimit));
 
     // Determine the final result and update the UI accordingly
         //RK: Decided to use resting heart rate only and not max to check if within range
