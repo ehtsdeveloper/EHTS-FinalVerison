@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,6 +68,7 @@ public class EmployeeRecord extends AppCompatActivity {
 
     TextView tvLow, tvResting, tvMax;
     TextView AvgtvLow, AvgtvResting, AvgtvMax;
+    TextView OxyNum;
 
     TextView tvFinalResult;
     Button ModerateTest;
@@ -74,6 +76,8 @@ public class EmployeeRecord extends AppCompatActivity {
     private boolean isModerateTestSelected = false;
     private boolean isIntenseTestSelected = false;
     CardView cardFinalResult;
+    Switch TestAvgType;
+    private boolean isTestAvgTypeOn = false;
 
     // TextView  editProfile;
     Button deleteProfile;
@@ -116,18 +120,19 @@ public class EmployeeRecord extends AppCompatActivity {
         tvLow = findViewById(R.id.tv_low);
         tvResting = findViewById(R.id.tv_resting);
         tvMax = findViewById(R.id.tv_max);
-
+        OxyNum = findViewById(R.id.oxyNumText);
 
         AvgtvLow = findViewById(R.id.Avgtv_low);
         AvgtvResting = findViewById(R.id.Avgtv_resting);
         AvgtvMax = findViewById(R.id.Avgtv_max);
 
 
+
         tvFinalResult = findViewById(R.id.tvFinalResult);
         cardFinalResult = findViewById(R.id.cardFinalResult);
         ModerateTest = findViewById(R.id.ModerateTest);
         IntenseTest= findViewById(R.id.IntenseTest);
-
+        TestAvgType= findViewById(R.id.TestAvgType);
 
 
         lineChart = findViewById(R.id.chart);
@@ -293,6 +298,10 @@ public class EmployeeRecord extends AppCompatActivity {
                     if (data.getMax() != null) {
                         tvMax.setText(String.valueOf(data.getMax().intValue()));
                     }
+
+                    if (data.getOxy() != null) {
+                        OxyNum.setText(String.valueOf(data.getOxy().intValue()));
+                    }
                     // Call fetchSensorsData2() after updating the views
                     fetchSensorsData2();
                 }
@@ -317,6 +326,9 @@ public class EmployeeRecord extends AppCompatActivity {
                 int lowSum = 0;
                 int restingSum = 0;
                 int maxSum = 0;
+                //EY: variable for date of test end and its format created
+                String DateTimeEndStamp;
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     // Access the data of each child node
@@ -362,6 +374,8 @@ public class EmployeeRecord extends AppCompatActivity {
 
     //allow users to retrive the last 24 hour tests and ask user moderate vs intense then determine if they passed or failed
     private void updateFinalResultUI() {
+        int restingHR = 0;
+        int maxHR = 0;
         // Calculate the target heart rate ranges based on age
         int age = Integer.parseInt(agedata.getText().toString());
         int maxAgeRelatedHR = 220 - age;
@@ -371,17 +385,24 @@ public class EmployeeRecord extends AppCompatActivity {
         int vigorousIntensityLowerLimit = (int) (maxAgeRelatedHR * 0.70);
         int vigorousIntensityUpperLimit = (int) (maxAgeRelatedHR * 0.93);
 
-
-
+        // EY: depending on if switch is on 24 hours or all tests change value of isTestAvgTypeOn
         // Initialize restingHR and maxHR variables
-        int restingHR = Integer.parseInt(AvgtvResting.getText().toString());
-        int maxHR = Integer.parseInt(AvgtvMax.getText().toString());
+        if (isTestAvgTypeOn){ //24 hr = true
+            restingHR = Integer.parseInt(tvResting.getText().toString());
+            maxHR = Integer.parseInt(tvMax.getText().toString());
+        }
+        else {
+            restingHR = Integer.parseInt(AvgtvResting.getText().toString());
+            maxHR = Integer.parseInt(AvgtvMax.getText().toString());
+
+        }
 
 
         // Calculate the target heart rate range based on the selected test
         int targetLowerLimit;
         int targetUpperLimit;
         String testType;
+
 
         if (isModerateTestSelected) {
             targetLowerLimit = moderateIntensityLowerLimit;
@@ -397,8 +418,8 @@ public class EmployeeRecord extends AppCompatActivity {
         }
 
         // Check if either the resting or max heart rate is within the target range
-        boolean isRestingHRWithinRange = (restingHR >= targetLowerLimit && restingHR <= targetUpperLimit);
-        boolean isMaxHRWithinRange = (maxHR >= targetLowerLimit && maxHR <= targetUpperLimit);
+        boolean isRestingHRWithinRange = ((restingHR >= targetLowerLimit) && (restingHR <= targetUpperLimit));
+        boolean isMaxHRWithinRange = ((maxHR >= targetLowerLimit) && (maxHR <= targetUpperLimit));
 
     // Determine the final result and update the UI accordingly
         //RK: Decided to use resting heart rate only and not max to check if within range
@@ -620,6 +641,7 @@ private void fetchHeartRateData() {
         String low = tvLow.getText().toString();
         String resting = tvResting.getText().toString();
         String max = tvMax.getText().toString();
+        String Oxy = OxyNum.getText().toString();
 
         String avgLow = AvgtvLow.getText().toString();
         String avgResting = AvgtvResting.getText().toString();

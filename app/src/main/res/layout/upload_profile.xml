@@ -58,29 +58,30 @@
                 android:textSize="14sp"
                 android:textAlignment="center"
                 android:textColor="@color/blue"/>
+
             <EditText
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
                 android:id="@+id/uploadName"
-                android:backgroundTint="@color/white"
-                android:background="@drawable/darkgrayborder"
-                android:layout_marginTop="10dp"
-                android:padding="10dp"
-                android:hint="@string/employee_full_name"
-                android:gravity="start|center_vertical"
-                android:textColor="@color/black"
-                />
-            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:id="@+id/uploadEmpID"
+                android:layout_marginTop="10dp"
                 android:backgroundTint="@color/white"
                 android:background="@drawable/darkgrayborder"
-                android:layout_marginTop="10dp"
+               
+                android:hint="@string/employee_full_name"
                 android:padding="10dp"
-                android:hint="@string/employee_id"
+                android:textColor="@color/black" />
+
+            <EditText
+                android:id="@+id/uploadEmpID"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/white"
+                android:background="@drawable/darkgrayborder"
                 android:gravity="start|center_vertical"
-                android:textColor="@color/black"/>
+                android:hint="@string/employee_id"
+                android:padding="10dp"
+                android:textColor="@color/black" />
 
             <EditText
                 android:layout_width="match_parent"
