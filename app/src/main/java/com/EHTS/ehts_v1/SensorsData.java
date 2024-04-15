@@ -42,6 +42,12 @@ public class SensorsData {
         this.max = max;
     }
 
+    //temp for test
+    public Double getOxy() {
+        double Oxygen = 98;
+        return Oxygen;
+    }
+
     public String getRecordingStartTimeStamp() {
         return recordingStartTimeStamp;
     }

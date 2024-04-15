@@ -68,6 +68,7 @@ public class EmployeeRecord extends AppCompatActivity {
 
     TextView tvLow, tvResting, tvMax;
     TextView AvgtvLow, AvgtvResting, AvgtvMax;
+    TextView OxyNum;
 
     TextView tvFinalResult;
     Button ModerateTest;
@@ -119,11 +120,12 @@ public class EmployeeRecord extends AppCompatActivity {
         tvLow = findViewById(R.id.tv_low);
         tvResting = findViewById(R.id.tv_resting);
         tvMax = findViewById(R.id.tv_max);
-
+        OxyNum = findViewById(R.id.oxyNumText);
 
         AvgtvLow = findViewById(R.id.Avgtv_low);
         AvgtvResting = findViewById(R.id.Avgtv_resting);
         AvgtvMax = findViewById(R.id.Avgtv_max);
+
 
 
         tvFinalResult = findViewById(R.id.tvFinalResult);
@@ -296,6 +298,10 @@ public class EmployeeRecord extends AppCompatActivity {
                     if (data.getMax() != null) {
                         tvMax.setText(String.valueOf(data.getMax().intValue()));
                     }
+
+                    if (data.getOxy() != null) {
+                        OxyNum.setText(String.valueOf(data.getOxy().intValue()));
+                    }
                     // Call fetchSensorsData2() after updating the views
                     fetchSensorsData2();
                 }
@@ -334,30 +340,7 @@ public class EmployeeRecord extends AppCompatActivity {
                             lowSum += data.getLow().intValue();
                         }
 
-                        //EY: switch for only 24 hrs is selcted
-                        if ((isTestAvgTypeOn == true) && (data.getResting() != null)){
-                            childrenCount = 0;
-                            DateTimeEndStamp = data.getRecordingStopTimeStamp().toString();
-                            try {
-                                Date date = format.parse(DateTimeEndStamp);
-                                SimpleDateFormat dayFormat = new SimpleDateFormat("dd");
-                                String day = dayFormat.format(date);
-                                int TestDay = Integer.parseInt(day);
-
-                                // if the date of test is within 1 day of previoous test then add to sum
-                                if (TestDay - (TestDay - 1) == 1) {
-                                    restingSum += data.getResting().intValue();
-                                    childrenCount ++;
-                                }
-                            }
-                            catch (Exception e) {
-                                e.printStackTrace();
-                        }
-
-                        }
-
-                    // EY: added the false condition to prevent errors in calculations of restingsum in case of default
-                        if ((data.getResting() != null) && (isTestAvgTypeOn == false)) {
+                        if (data.getResting() != null) {
                             restingSum += data.getResting().intValue();
                         }
 
@@ -403,18 +386,12 @@ public class EmployeeRecord extends AppCompatActivity {
         int vigorousIntensityUpperLimit = (int) (maxAgeRelatedHR * 0.93);
 
         // EY: depending on if switch is on 24 hours or all tests change value of isTestAvgTypeOn
-        if (TestAvgType.isChecked()) //true = 24hrs
-        { isTestAvgTypeOn = true; }
-        else
-        { isTestAvgTypeOn = false; }
-
-
         // Initialize restingHR and maxHR variables
-        if (isTestAvgTypeOn){
+        if (isTestAvgTypeOn){ //24 hr = true
             restingHR = Integer.parseInt(tvResting.getText().toString());
             maxHR = Integer.parseInt(tvMax.getText().toString());
         }
-        else{
+        else {
             restingHR = Integer.parseInt(AvgtvResting.getText().toString());
             maxHR = Integer.parseInt(AvgtvMax.getText().toString());
 
@@ -664,6 +641,7 @@ private void fetchHeartRateData() {
         String low = tvLow.getText().toString();
         String resting = tvResting.getText().toString();
         String max = tvMax.getText().toString();
+        String Oxy = OxyNum.getText().toString();
 
         String avgLow = AvgtvLow.getText().toString();
         String avgResting = AvgtvResting.getText().toString();

@@ -713,6 +713,71 @@
 
 
             </androidx.cardview.widget.CardView>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="-5dp"
+                android:layout_marginBottom="-23dp"
+                android:gravity="center|center_vertical">
+
+                <TextView
+                    android:id="@+id/oxygenSatu"
+                    android:layout_width="159dp"
+                    android:layout_height="67dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="36dp"
+                    android:layout_marginTop="36dp"
+                    android:layout_marginBottom="46dp"
+                    android:gravity="center"
+                    android:text="Oxygen Saturation :\n(Percent)"
+                    android:textColor="@color/DarkHeaderGray"
+                    android:textSize="7pt"
+                    android:textStyle="bold"
+                    android:textAlignment="center"/>
+
+                <ImageView
+                    android:id="@+id/oxyCircleImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="142dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="17dp"
+                    android:layout_marginTop="-1dp"
+                    android:layout_marginEnd="47dp"
+                    android:layout_marginBottom="9dp"
+                    android:layout_toEndOf="@+id/oxygenSatu"
+                    android:gravity="center"
+                    android:paddingTop="6dp"
+                    android:src="@drawable/baseline_circle_grey" />
+
+                <TextView
+                    android:id="@+id/oxyNumText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="49dp"
+                    android:layout_alignStart="@+id/oxyCircleImage"
+                    android:layout_alignEnd="@+id/oxyCircleImage"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="37dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="34dp"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textColor="@color/white"
+                    android:textSize="30dp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="42dp"
@@ -992,8 +1057,6 @@
 
 
         </LinearLayout>
-
-
 
 
         </LinearLayout>
