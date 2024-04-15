@@ -8,5 +8,7 @@ data class SensorsData(
    // var recordingTimeStamp: String? = null,
     val recordingStartTime: String? = null,
     val recordingStopTime: String? = null,
-    var key: String? = null
+    var key: String? = null,
+    var oxygenStart: Double? = 0.0
+    // var oxygenEnd: Double? = 0.0
 )

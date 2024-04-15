@@ -1,13 +1,11 @@
 package com.EHTS.ehts_v1;
 
 
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -118,7 +116,7 @@ public class EmployeeRecord extends AppCompatActivity {
         tvMax = findViewById(R.id.tv_max);
 
 
-        AvgtvLow = findViewById(R.id.Avgtv_low);
+        AvgtvLow = findViewById(R.id.oxyEndNum);
         AvgtvResting = findViewById(R.id.Avgtv_resting);
         AvgtvMax = findViewById(R.id.Avgtv_max);
 

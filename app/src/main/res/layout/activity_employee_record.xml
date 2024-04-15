@@ -548,7 +548,7 @@
                             android:src="@drawable/baseline_circle_yellow" />
 
                         <TextView
-                            android:id="@+id/Avgtv_low"
+                            android:id="@+id/oxyEndNum"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
@@ -595,7 +595,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:id="@+id/Avgredcircle"
+                        android:id="@+id/oxyStartCircle"
                         android:layout_below="@id/hrTestReslut">
 
                         <ImageView
@@ -713,6 +713,7 @@
 
 
             </androidx.cardview.widget.CardView>
+
             <TextView
                 android:id="@+id/chooseTest"
                 android:layout_width="match_parent"

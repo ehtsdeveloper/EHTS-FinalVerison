@@ -28,6 +28,7 @@ import com.samsung.android.service.health.tracking.HealthTracker
 import com.samsung.android.service.health.tracking.HealthTrackerException
 import com.samsung.android.service.health.tracking.data.DataPoint
 import com.samsung.android.service.health.tracking.data.HealthTrackerType
+import com.samsung.android.service.health.tracking.data.ValueKey
 import java.text.SimpleDateFormat
 import java.util.*
 /*References: 1. https://developer.samsung.com/codelab/health/blood-oxygen.html including Measuring Blood Oxygen Sample Code
@@ -57,6 +58,8 @@ class HeartRate : Activity(), SensorEventListener {
     private var restingHeartRate = 0.0
     private var maxHeartRate = 0.0
     private var lowHeartRate = 0.0
+    private var OxygenStart = 0.0
+    private var OxygenEnd = 0.0
     private lateinit var goBackButton: Button
     private lateinit var stopButton: Button
     private lateinit var startButton: Button
@@ -88,8 +91,20 @@ class HeartRate : Activity(), SensorEventListener {
     }
     private val trackerListen: HealthTracker.TrackerEventListener=object:
         HealthTracker.TrackerEventListener {
-        override fun onDataReceived(p0: MutableList<DataPoint>) {
-            TODO("Not yet implemented")
+        override fun onDataReceived(p0: MutableList<DataPoint>) { //EY adding data via samsung developer tortorial
+            p0.forEach { data ->
+                updateSpo2(data)
+
+            }
+        }
+        private fun updateSpo2(data: DataPoint) {
+            val status = data.getValue(ValueKey.SpO2Set.STATUS)
+            var spo2Value = 0
+            //if (status == MEASUREMENT_COMPLETED) {
+                spo2Value = data.getValue(ValueKey.SpO2Set.SPO2)
+           // }
+          // ObserverUpdater.getObserverUpdater().notifyTrackerObservers(status, spo2Value)
+            OxygenStart = spo2Value.toDouble()
         }
 
         override fun onFlushCompleted() {
@@ -101,6 +116,9 @@ class HeartRate : Activity(), SensorEventListener {
         }
 
     }
+
+
+
     //RK oxygen end
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -156,6 +174,7 @@ class HeartRate : Activity(), SensorEventListener {
 
         // Set click listener for the "Start" button
         startButton.setOnClickListener {
+            //EY: oxygen probably needs to go here
             recordingStartTime = System.currentTimeMillis() // Get the start timestamp when the button is clicked
             startHeartRateRecording()
             startButton.visibility = Button.INVISIBLE // Hide the start button
@@ -245,6 +264,7 @@ class HeartRate : Activity(), SensorEventListener {
 
             // Check if lowHeartRate is zero
             if (lowHeartRate != 0.0) {
+                // EY add oxygen to database xia this
                 val data = SensorsData(restingHeartRate, lowHeartRate, maxHeartRate, recordingStartTimestamp, recordingStopTimestamp)
                 // Store the heart rate data in your database
                 val userId = FirebaseAuth.getInstance().currentUser?.uid
@@ -290,7 +310,7 @@ class HeartRate : Activity(), SensorEventListener {
             val heartRateText = String.format(
                 Locale.getDefault(),
                 "Heart Rate\nResting: %.1f\nLow: %.1f\nMax: %.1f\nRecording Start Timestamp: %s\nRecording Stop Timestamp: %s",
-                restingHeartRate, lowHeartRate, maxHeartRate, recordingStartTimestamp, recordingStopTimestamp
+                restingHeartRate, lowHeartRate, maxHeartRate, recordingStartTimestamp, recordingStopTimestamp, OxygenStart
             )
             textHeartRate.text = heartRateText
             // Clear the heartRateData list after processing its contents
@@ -299,7 +319,6 @@ class HeartRate : Activity(), SensorEventListener {
 
 
         }
-
 
 
 
