@@ -326,9 +326,6 @@ public class EmployeeRecord extends AppCompatActivity {
                 int lowSum = 0;
                 int restingSum = 0;
                 int maxSum = 0;
-                //EY: variable for date of test end and its format created
-                String DateTimeEndStamp;
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     // Access the data of each child node
@@ -385,9 +382,9 @@ public class EmployeeRecord extends AppCompatActivity {
         int vigorousIntensityLowerLimit = (int) (maxAgeRelatedHR * 0.70);
         int vigorousIntensityUpperLimit = (int) (maxAgeRelatedHR * 0.93);
 
-        // EY: depending on if switch is on 24 hours or all tests change value of isTestAvgTypeOn
+        // EY: depending on if switch is on most recent or all tests change value of isTestAvgTypeOn
         // Initialize restingHR and maxHR variables
-        if (isTestAvgTypeOn){ //24 hr = true
+        if (isTestAvgTypeOn){ //recent = true
             restingHR = Integer.parseInt(tvResting.getText().toString());
             maxHR = Integer.parseInt(tvMax.getText().toString());
         }
